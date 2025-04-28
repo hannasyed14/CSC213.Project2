@@ -25,6 +25,19 @@ public class ComplaintLoader {
      */
     public static List<Complaint> loadComplaintsWithEmbeddings(String csvPath, String jsonlPath) throws Exception {
         // TODO: Load CSV and JSONL resources, parse, and return hydrated Complaint list
-        return List.of(); // placeholder
+        InputStream csvStream = ComplaintLoader.class.getResourceAsStream(csvPath);
+        InputStream jsonlStream = ComplaintLoader.class.getResourceAsStream(jsonlPath);
+
+        List<Complaint> complaints = new CsvToBeanBuilder<Complaint>(new InputStreamReader(csvStream, StandardCharsets.UTF_8))
+                .withType(Complaint.class)
+                .build()
+                .parse();
+
+        Map<Long, double[]> embeddings = EmbeddingLoader.loadEmbeddings(jsonlStream);
+
+        ComplaintMerger.mergeEmbeddings(complaints, embeddings);
+
+        return complaints;
     }
 }
+

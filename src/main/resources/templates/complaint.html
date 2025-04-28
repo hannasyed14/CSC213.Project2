@@ -26,3 +26,16 @@
 
 </body>
 </html>
+<p><strong>Date Received:</strong> <span th:text="${complaint.dateReceived}"></span></p>
+<p><strong>Product:</strong> <span th:text="${complaint.product}"></span></p>
+<p><strong>Sub-Product:</strong> <span th:text="${complaint.subProduct}"></span></p>
+<p><strong>Issue:</strong> <span th:text="${complaint.issue}"></span></p>
+<p><strong>Sub-Issue:</strong> <span th:text="${complaint.subIssue}"></span></p>
+<p><strong>Company Public Response:</strong> <span th:text="${complaint.companyResponse}"></span></p>
+<p><strong>State:</strong> <span th:text="${complaint.state}"></span></p>
+<p><strong>ZIP Code:</strong> <span th:text="${complaint.zipCode}"></span></p>
+<hr/>
+<form method="get" action="/complaint">
+    <input type="number" name="index" placeholder="Enter complaint #..." />
+    <button type="submit">Jump</button>
+</form>

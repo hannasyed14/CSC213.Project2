@@ -21,7 +21,33 @@ public class EmbeddingLoader {
      */
     public static Map<Long, double[]> loadEmbeddings(InputStream jsonlStream) throws IOException {
         // TODO: Implement parsing of JSONL to extract complaintId and embedding
-        return new HashMap<>();
+        Map<Long, double[]> embeddings = new HashMap<>();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(jsonlStream));
+        ObjectMapper mapper = new ObjectMapper();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            Map<String, Object> map = mapper.readValue(line, Map.class);
+
+            Object idField = map.get("complaintId");
+            if (idField == null) {
+                idField = map.get("id");
+            }
+
+            Long id;
+            if (idField instanceof Number) {
+                id = ((Number) idField).longValue();
+            } else if (idField instanceof String) {
+                id = Long.parseLong((String) idField);
+            } else {
+                throw new IllegalArgumentException("Unexpected id field type: " + idField);
+            }
+
+            List<Double> embeddingList = (List<Double>) map.get("embedding");
+            double[] embeddingArray = embeddingList.stream().mapToDouble(Double::doubleValue).toArray();
+            embeddings.put(id, embeddingArray);
+        }
+        return embeddings;
     }
+
 
 }

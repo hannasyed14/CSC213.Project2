@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class ComplaintController {
@@ -36,4 +37,25 @@ public class ComplaintController {
 
         return "complaint"; // ← This maps to complaint.html
     }
+// Create a Search term URL on this page
+@GetMapping("/search")
+public String searchComplaints(@RequestParam(required = false) String company, Model model) {
+    if (company == null || company.trim().isEmpty()) {
+        model.addAttribute("error", "Please enter a company name to search.");
+        return "search";
+    }
+
+    List<Complaint> results = complaints.stream()
+            .filter(c -> c.getCompany() != null && c.getCompany().toLowerCase().contains(company.toLowerCase()))
+            .collect(Collectors.toList());
+
+    if (results.isEmpty()) {
+        model.addAttribute("error", "No complaints found for: " + company);
+    } else {
+        model.addAttribute("searchResults", results);
+    }
+
+    model.addAttribute("companySearch", company);
+    return "search"; // Maps to search.html
+}
 }
